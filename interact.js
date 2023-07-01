@@ -1,3 +1,7 @@
+
+
+
+
 const contractAbi = [
   {
     inputs: [
@@ -88,6 +92,17 @@ const web3 = new Web3(new Web3.providers.HttpProvider(web3Provider));
 
 const contrato = new web3.eth.Contract(contractAbi, contractAddress);
 
+let accounts;
+web3.eth.getAccounts()
+  .then(function (result) {
+    accounts = result;
+    // Aqui você pode especificar a conta de origem
+    web3.eth.defaultAccount = accounts[0];
+  })
+  .catch(function (error) {
+    console.error(error);
+    alert("Erro ao obter contas.");
+  });
 
 function depositar() {
   const valor = document.getElementById("deposito").value;
