@@ -1,86 +1,137 @@
-const Web3 = require('web3');
-
-const sender =  '0xd64B3Dbd700f0234B6535a0f2c426fD982B3EbB7';
-const ganacheHost = 'HTTP://127.0.0.1:7545';
-const contratoEndereco = '0xaba5E1Cb30bC40e941705A4b0F39D3E28F6e704d';
-const contratoAbi = [
-	{
-		"inputs": [],
-		"name": "get",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "nome",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "valor",
-				"type": "uint256"
-			}
-		],
-		"name": "sacar",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "saldoContaCorrente",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
+const contractAbi = [
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_nome",
+        type: "string",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "valor",
+        type: "uint256",
+      },
+    ],
+    name: "depositar",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "nome",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "valor",
+        type: "uint256",
+      },
+    ],
+    name: "sacar",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "saldo",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "verSaldo",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
 ];
 
-async function interagirComContrato() {
-  try {
-    const web3 = new Web3(ganacheHost);
+const contractAddress = "0x88Dd495893cF7BacC30f273D6794f06c81Ebf8A9";
 
-    const contrato = new web3.eth.Contract(contratoAbi, contratoEndereco);
 
-    const nome = await contrato.methods.nome().call();
-    const saldo = await contrato.methods.saldoContaCorrente().call();
+const web3Provider = "HTTP://127.0.0.1:7545";
 
-    console.log('Nome:', nome);
-    console.log('Saldo:', saldo);
 
-    const valorSaque = 100;
-    await contrato.methods.sacar(valorSaque).send({ from: sender }); //Aqui vai gerar erro pois Saldo = 0
+const web3 = new Web3(new Web3.providers.HttpProvider(web3Provider));
 
-    console.log(`Saque de ${valorSaque} realizado com sucesso!`);
 
-	
-    const novoSaldo = await contrato.methods.saldoContaCorrente().call();
-    console.log('Novo Saldo:', novoSaldo);
-  } catch (error) {
-    console.error('Erro ao interagir com o contrato:', error);
-  }
+const contrato = new web3.eth.Contract(contractAbi, contractAddress);
+
+
+function depositar() {
+  const valor = document.getElementById("deposito").value;
+
+  contrato.methods
+    .depositar(valor)
+    .send({ from: web3.eth.defaultAccount })
+    .on("receipt", function (receipt) {
+      console.log(receipt);
+      alert("Depósito realizado com sucesso!");
+    })
+    .on("error", function (error) {
+      console.error(error);
+      alert("Erro ao realizar o depósito.");
+    });
 }
 
-interagirComContrato();
+
+function sacar() {
+  const valor = document.getElementById("saque").value;
+
+  contrato.methods
+    .sacar(valor)
+    .send({ from: web3.eth.defaultAccount })
+    .on("receipt", function (receipt) {
+      console.log(receipt);
+      alert("Saque realizado com sucesso!");
+    })
+    .on("error", function (error) {
+      console.error(error);
+      alert("Erro ao realizar o saque.");
+    });
+}
+
+
+function verSaldo() {
+  contrato.methods
+    .verSaldo()
+    .call({ from: web3.eth.defaultAccount })
+    .then(function (result) {
+      document.getElementById("saldo").textContent = "Saldo: " + result;
+    })
+    .catch(function (error) {
+      console.error(error);
+      alert("Erro ao verificar o saldo.");
+    });
+}

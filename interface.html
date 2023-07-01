@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa Eletrônico</title>
+  </head>
+  <body>
+    <h1>Caixa Eletrônico</h1>
+
+    <label for="deposito">Depositar:</label>
+    <input
+      type="number"
+      id="deposito"
+      placeholder="Digite o valor a depositar"
+    />
+    <button onclick="depositar()">Depositar</button>
+
+    <br />
+
+    <label for="saque">Sacar:</label>
+    <input type="number" id="saque" placeholder="Digite o valor a sacar" />
+    <button onclick="sacar()">Sacar</button>
+
+    <br />
+
+    <button onclick="verSaldo()">Ver Saldo</button>
+    <p id="saldo"></p>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/4.0.2/web3.min.js" integrity="sha512-4D1Ssn7wnKX8wN5ngp9Gq+r5paUi7N+lYQO8/Mhr4djP6BDjErM9IxpaayiU0VuQKrU7wCc/+Y8ZZ9IM2lyS1Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="interact.js"></script>
+  </body>
+</html>
