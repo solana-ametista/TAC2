@@ -96,7 +96,6 @@ let accounts;
 web3.eth.getAccounts()
   .then(function (result) {
     accounts = result;
-    // Aqui você pode especificar a conta de origem
     web3.eth.defaultAccount = accounts[0];
   })
   .catch(function (error) {
